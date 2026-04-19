@@ -295,6 +295,11 @@ def generate_banking_presentation():
         "・本日の学びが、金融の未来を考えるきっかけになれば幸いです。"
     ])
 
+    # References
+    gen.add_content_slide("参考一覧", [
+        "（ここに参考資料・Webサイトのリンク等を追記）"
+    ])
+
     output_path = "bank_industry_presentation.pptx"
     gen.save(output_path)
     print(f"Presentation saved to {output_path}")
