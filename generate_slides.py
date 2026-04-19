@@ -129,11 +129,17 @@ class PresentationGenerator:
         line.fill.fore_color.rgb = BEIGE
         line.line.visible = False
 
-        # Title
+        # Title (Strip leading numbering if present, e.g., '1. ' -> '')
+        display_title = title
+        if ". " in title:
+            parts = title.split(". ", 1)
+            if parts[0].isdigit():
+                display_title = parts[1]
+
         title_box = slide.shapes.add_textbox(0, Inches(3.6), self.prs.slide_width, Inches(1.5))
         tf_title = title_box.text_frame
         p_title = tf_title.add_paragraph()
-        p_title.text = title
+        p_title.text = display_title
         p_title.font.name = FONT_SANS
         p_title.font.size = Pt(40)
         p_title.font.bold = True
