@@ -147,21 +147,34 @@ class PresentationGenerator:
         p_title.alignment = PP_ALIGN.CENTER
 
     def add_image_slide(self, title, image_path):
-        """Adds a slide with a large centered image, specialized for charts/timelines."""
+        """Adds a slide with an image intelligently scaled to fit the content area."""
         slide_layout = self.prs.slide_layouts[6]
         slide = self.prs.slides.add_slide(slide_layout)
         self._add_base_design(slide, title)
 
         if os.path.exists(image_path):
-            # Expanded sizing for maximized visual impact
-            top = Inches(1.6)
-            width = self.prs.slide_width - Inches(1.2) # Wider than generic content slides
-            pic = slide.shapes.add_picture(image_path, Inches(0.6), top, width=width)
+            # Define safe content area
+            margin_left = Inches(0.8)
+            top_start = Inches(1.6)
+            max_w = self.prs.slide_width - (margin_left * 2)
+            max_h = self.prs.slide_height - top_start - Inches(0.8) # Leaving space at bottom
+
+            # Add picture to measure original size
+            pic = slide.shapes.add_picture(image_path, 0, 0)
             
-            # Vertical centering logic
-            remaining_height = self.prs.slide_height - top - Inches(0.5)
-            if pic.height < remaining_height:
-                pic.top = top + (remaining_height - pic.height) // 2
+            # Calculate aspect-ratio scaling
+            ratio = min(max_w / pic.width, max_h / pic.height)
+            
+            new_w = int(pic.width * ratio)
+            new_h = int(pic.height * ratio)
+            
+            # Update picture properties
+            pic.width = new_w
+            pic.height = new_h
+            
+            # Center horizontally and vertically within the safe area
+            pic.left = int((self.prs.slide_width - new_w) // 2)
+            pic.top = int(top_start + (max_h - new_h) // 2)
 
     def add_content_slide(self, title, items):
         slide_layout = self.prs.slide_layouts[6]
@@ -280,7 +293,7 @@ def generate_banking_presentation():
         "■ 「利ざや」の仕組み",
         "  ・貸出金利（受取）と預金利息（支払）の差額こそが利益。",
         "■ 信用創造機能",
-        "  ・預金と貸出を繰り返すことで、世の中の通貨量を増大させる。",
+        "  ・預金と貸出を繰り返すことで、世の日の中の通貨量を増大させる。",
         "  ・経済を膨らませ、社会の成長を加速させる独自の機能。"
     ])
 
