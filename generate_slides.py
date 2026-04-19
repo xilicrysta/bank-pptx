@@ -238,9 +238,6 @@ def generate_banking_presentation():
 
     # --- Section 2 ---
     gen.add_transition_slide(2, sections[1])
-    
-    # Visual Overview: Detailed Timeline
-    gen.add_image_slide("2. 銀行の歴史（変遷のタイムライン）", "assets/history_timeline.png")
 
     gen.add_content_slide("2. 銀行の歴史（欧州の起源と近代制度）", [
         "■ ヨーロッパの起源",
