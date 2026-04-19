@@ -9,7 +9,7 @@ from pptx.enum.shapes import MSO_SHAPE
 NAVY = RGBColor(0x14, 0x3D, 0x98)
 LIGHT_BLUE = RGBColor(0x37, 0x5B, 0xA4)
 BEIGE = RGBColor(0xE6, 0xD0, 0xA4)
-OFF_WHITE = RGBColor(0xFE, 0xFE, 0xFE)
+WHITE = RGBColor(0xFF, 0xFF, 0xFF) # Unified to Pure White for seamless image integration
 BLACK = RGBColor(0x33, 0x33, 0x33)
 
 FONT_SANS = "Hiragino Sans"  # Preferred for macOS
@@ -29,7 +29,7 @@ class PresentationGenerator:
         background = slide.background
         fill = background.fill
         fill.solid()
-        fill.fore_color.rgb = OFF_WHITE
+        fill.fore_color.rgb = WHITE
 
         # Top border line
         line = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, self.prs.slide_width, Inches(0.05))
@@ -90,7 +90,7 @@ class PresentationGenerator:
         p.font.name = FONT_SANS
         p.font.size = Pt(44)
         p.font.bold = True
-        p.font.color.rgb = OFF_WHITE if image_path else NAVY
+        p.font.color.rgb = WHITE if image_path else NAVY
         
         p2 = tf.add_paragraph()
         p2.text = self.subtitle
@@ -129,7 +129,7 @@ class PresentationGenerator:
         line.fill.fore_color.rgb = BEIGE
         line.line.visible = False
 
-        # Title (Strip leading numbering if present)
+        # Title
         display_title = title
         if ". " in title:
             parts = title.split(". ", 1)
@@ -143,22 +143,22 @@ class PresentationGenerator:
         p_title.font.name = FONT_SANS
         p_title.font.size = Pt(40)
         p_title.font.bold = True
-        p_title.font.color.rgb = OFF_WHITE
+        p_title.font.color.rgb = WHITE
         p_title.alignment = PP_ALIGN.CENTER
 
     def add_image_slide(self, title, image_path):
-        """Adds a slide with a large centered image, maintaining base design frame."""
+        """Adds a slide with a large centered image, specialized for charts/timelines."""
         slide_layout = self.prs.slide_layouts[6]
         slide = self.prs.slides.add_slide(slide_layout)
         self._add_base_design(slide, title)
 
         if os.path.exists(image_path):
-            # Calculate sizing to fit nicely within the frame
+            # Expanded sizing for maximized visual impact
             top = Inches(1.6)
-            width = self.prs.slide_width - Inches(2.0)
-            pic = slide.shapes.add_picture(image_path, Inches(1.0), top, width=width)
+            width = self.prs.slide_width - Inches(1.2) # Wider than generic content slides
+            pic = slide.shapes.add_picture(image_path, Inches(0.6), top, width=width)
             
-            # Center vertically within the remaining space if possible
+            # Vertical centering logic
             remaining_height = self.prs.slide_height - top - Inches(0.5)
             if pic.height < remaining_height:
                 pic.top = top + (remaining_height - pic.height) // 2
@@ -226,25 +226,25 @@ def generate_banking_presentation():
     # --- Section 2 ---
     gen.add_transition_slide(2, sections[1])
     
-    # Visual Overview: Timeline
-    gen.add_image_slide(sections[1], "assets/history_timeline.png")
+    # Visual Overview: Detailed Timeline
+    gen.add_image_slide("2. 銀行の歴史（変遷のタイムライン）", "assets/history_timeline.png")
 
-    gen.add_content_slide("2. 銀行の歴史（欧州の起源と近代日本）", [
+    gen.add_content_slide("2. 銀行の歴史（欧州の起源と近代制度）", [
         "■ ヨーロッパの起源",
-        "  ・中世、金細工師（ゴールドスミス）が金を預かった「預かり証」が紙幣の原型に。",
+        "  ・中世の両替商や、1694年のイングランド銀行設立が近代銀行の礎に。",
         "■ 日本銀行の設立（1882年）",
-        "  ・インフレの抑制と通貨価値の安定という重大な使命。",
-        "■ 殖産興業と金融",
-        "  ・明治の近代化政策を支えるため、多くの国立銀行が設立された。"
+        "  ・松方デフレを経て、通貨の番人としての中央銀行が誕生。",
+        "■ 第一国立銀行（1873年）",
+        "  ・渋沢栄一により設立された日本初の民間銀行。殖産興業を支えた。"
     ])
 
     gen.add_content_slide("2. 銀行の歴史（高度成長〜平成再編）", [
-        "■ 高度経済成長期",
-        "  ・長期信用銀行（長銀）などが設備投資を支え、奇跡の成長を支えた。",
-        "■ バブルの狂奔と崩壊（1990年前後）",
-        "  ・過剰融資による不良債権問題。大規模な合併（メガバンク誕生）へ。",
-        "■ 異業種参入と再編",
-        "  ・金融ビッグバンを経て、店舗を持たないネット銀行なども台頭。"
+        "■ 高度経済成長期（1950s-70s）",
+        "  ・旺盛な設備投資を支え、日本を世界第2位の経済大国へ導いた。",
+        "■ バブル崩壊と「失われた30年」",
+        "  ・1990年前後の狂奔と破綻。大規模な金融再編によりメガバンクが誕生。",
+        "■ デジタル変革（2000s-現代）",
+        "  ・インターネットバンキングの普及と、決済の脱銀行化が進展。"
     ])
 
     # --- Section 3 ---
