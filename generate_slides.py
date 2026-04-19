@@ -79,7 +79,7 @@ class PresentationGenerator:
             rect.fill.fore_color.rgb = NAVY
             rect.line.visible = False
 
-        # Title Block - Adjusted vertical position (Inches(2.5) -> Inches(1.8))
+        # Title Block
         title_top = Inches(1.8)
         title_box = slide.shapes.add_textbox(Inches(0.5), title_top, Inches(12), Inches(2))
         tf = title_box.text_frame
@@ -95,13 +95,51 @@ class PresentationGenerator:
         p2 = tf.add_paragraph()
         p2.text = self.subtitle
         p2.font.name = FONT_SANS
-        p2.font.size = Pt(20) # Shrink font size to keep on one line
+        p2.font.size = Pt(20)
         p2.font.color.rgb = BEIGE
         
         accent = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.5), title_top - Inches(0.3), Inches(1.0), Inches(0.1))
         accent.fill.solid()
         accent.fill.fore_color.rgb = BEIGE
         accent.line.visible = False
+
+    def add_transition_slide(self, chapter_num, title):
+        """Adds a high-impact section divider slide with NAVY background."""
+        slide_layout = self.prs.slide_layouts[6]
+        slide = self.prs.slides.add_slide(slide_layout)
+        
+        # Navy background
+        rect = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, self.prs.slide_width, self.prs.slide_height)
+        rect.fill.solid()
+        rect.fill.fore_color.rgb = NAVY
+        rect.line.visible = False
+
+        # Chapter Number (e.g., Section 01)
+        num_box = slide.shapes.add_textbox(0, Inches(2.2), self.prs.slide_width, Inches(1))
+        tf_num = num_box.text_frame
+        p_num = tf_num.add_paragraph()
+        p_num.text = f"Section {chapter_num:02d}"
+        p_num.font.name = FONT_SANS
+        p_num.font.size = Pt(28)
+        p_num.font.color.rgb = BEIGE
+        p_num.alignment = PP_ALIGN.CENTER
+
+        # Accent Line
+        line = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, self.prs.slide_width * 0.4, Inches(3.2), self.prs.slide_width * 0.2, Inches(0.02))
+        line.fill.solid()
+        line.fill.fore_color.rgb = BEIGE
+        line.line.visible = False
+
+        # Title
+        title_box = slide.shapes.add_textbox(0, Inches(3.6), self.prs.slide_width, Inches(1.5))
+        tf_title = title_box.text_frame
+        p_title = tf_title.add_paragraph()
+        p_title.text = title
+        p_title.font.name = FONT_SANS
+        p_title.font.size = Pt(40)
+        p_title.font.bold = True
+        p_title.font.color.rgb = OFF_WHITE
+        p_title.alignment = PP_ALIGN.CENTER
 
     def add_content_slide(self, title, items):
         slide_layout = self.prs.slide_layouts[6]
@@ -134,23 +172,27 @@ class PresentationGenerator:
         self.prs.save(filename)
 
 def generate_banking_presentation():
+    # Structural titles
+    sections = [
+        "銀行の本質的役割と定義",
+        "銀行の歴史：中世から現代までの変遷",
+        "銀行の種類：役割に応じた多様なプレイヤー",
+        "3大業務と銀行収益の仕組み",
+        "業界を取り巻く現状と直面する課題",
+        "未来への展望：DXと新たな金融の形"
+    ]
+
     gen = PresentationGenerator("銀行業界の基礎知識", "〜 経済の心臓が刻む、信頼と変革の物語 〜")
     
     # Slide 1: Cover
     gen.add_cover_slide("assets/cover_bg.png")
 
-    # Slide 2: Table of Contents (Structural re-design based on content)
-    gen.add_content_slide("本日の目次", [
-        "1. 銀行の本質的役割と定義",
-        "2. 銀行の歴史：中世から現代までの変遷",
-        "3. 銀行の種類：役割に応じた多様なプレイヤー",
-        "4. 3大業務と銀行収益の仕組み",
-        "5. 業界を取り巻く現状と直面する課題",
-        "6. 未来への展望：DXと新たな金融の形"
-    ])
+    # Slide 2: Table of Contents
+    gen.add_content_slide("本日の目次", sections)
 
-    # Section 1: Definition
-    gen.add_content_slide("1. 銀行の本質的役割と定義", [
+    # --- Section 1 ---
+    gen.add_transition_slide(1, sections[0])
+    gen.add_content_slide(f"1. {sections[0]}", [
         "■ 金融（資金の融通）のプロフェッショナル",
         "  ・お金が余っている人から、足りない人へ橋渡しを行う。",
         "■ 間接金融の中核",
@@ -159,8 +201,9 @@ def generate_banking_presentation():
         "  ・お金を血液に見立て、社会の隅々へ送り出すライフライン。"
     ])
 
-    # Section 2: History
-    gen.add_content_slide("2. 銀行の歴史：中世から現代までの変遷", [
+    # --- Section 2 ---
+    gen.add_transition_slide(2, sections[1])
+    gen.add_content_slide(f"2. {sections[1]}", [
         "■ ヨーロッパの起源",
         "  ・中世、金細工師（ゴールドスミス）が金を預かった「預かり証」が紙幣の原型に。",
         "  ・利息を取ることが禁忌とされていた時代、ユダヤ人が金融の先駆者となった。",
@@ -186,12 +229,13 @@ def generate_banking_presentation():
         "  ・異業種参入と持ち株会社制の解禁。"
     ])
 
-    # Section 3: Types
-    gen.add_content_slide("3. 銀行の種類：役割に応じた多様なプレイヤー", [
+    # --- Section 3 ---
+    gen.add_transition_slide(3, sections[2])
+    gen.add_content_slide(f"3. {sections[2]}", [
         "■ 日本銀行（中央銀行）",
         "  ・「銀行の銀行」「政府の銀行」「発券銀行」。",
         "■ 都市銀行（メガバンク）",
-        "  ・三菱UFJ、三井住友、みずほ。巨大な資本力で国・世界を支える。",
+        "  ・三菱UFJ、三井住友、みずほ. 巨大な資本力で国・世界を支える。",
         "■ 地方銀行・第二地銀",
         "  ・「地域密着」。地元企業との信頼関係（リレーションシップ）が命。"
     ])
@@ -205,8 +249,9 @@ def generate_banking_presentation():
         "  ・地域の相互扶助。利益より地域貢献を優先する非営利組織。"
     ])
 
-    # Section 4: Business Model
-    gen.add_content_slide("4. 3大業務と銀行収益の仕組み", [
+    # --- Section 4 ---
+    gen.add_transition_slide(4, sections[3])
+    gen.add_content_slide(f"4. {sections[3]}", [
         "1. 預金業務：大切な資産を安全に預かる。",
         "2. 貸出業務：成長を望む企業や個人へ資金を貸し付ける。",
         "   ・証書貸付、手形割引など。",
@@ -221,8 +266,9 @@ def generate_banking_presentation():
         "  ・支払準備制度により安全性を担保しつつ、経済を膨らませる機能。"
     ])
 
-    # Section 5: Issues
-    gen.add_content_slide("5. 業界を取り巻く現状と直面する課題", [
+    # --- Section 5 ---
+    gen.add_transition_slide(5, sections[4])
+    gen.add_content_slide(f"5. {sections[4]}", [
         "■ 超低金利環境の長期化",
         "  ・利ざやの縮小により、旧来の預貸モデルの限界が露呈。",
         "■ プラットフォーマーとの競争",
@@ -231,8 +277,9 @@ def generate_banking_presentation():
         "  ・「銀行は必要だが、銀行員はいらなくなる？」という問い。"
     ])
 
-    # Section 6: Future
-    gen.add_content_slide("6. 未来への展望：DXと新たな金融の形", [
+    # --- Section 6 ---
+    gen.add_transition_slide(6, sections[5])
+    gen.add_content_slide(f"6. {sections[5]}", [
         "■ バンキング・アズ・ア・サービス(BaaS)",
         "  ・金融機能をパーツとして他業種に提供するプラットフォーム化。",
         "■ 融合するテクノロジー：Olive、デジタル通貨",
