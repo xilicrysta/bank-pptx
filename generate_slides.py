@@ -79,7 +79,7 @@ class PresentationGenerator:
             rect.fill.fore_color.rgb = NAVY
             rect.line.visible = False
 
-        # Title Block - Positioned slightly higher for balance
+        # Title Block
         title_top = Inches(1.8)
         title_box = slide.shapes.add_textbox(Inches(0.5), title_top, Inches(12), Inches(2))
         tf = title_box.text_frame
@@ -129,7 +129,7 @@ class PresentationGenerator:
         line.fill.fore_color.rgb = BEIGE
         line.line.visible = False
 
-        # Title (Strip leading numbering if present, e.g., '1. ' -> '')
+        # Title (Strip leading numbering if present)
         display_title = title
         if ". " in title:
             parts = title.split(". ", 1)
@@ -146,12 +146,29 @@ class PresentationGenerator:
         p_title.font.color.rgb = OFF_WHITE
         p_title.alignment = PP_ALIGN.CENTER
 
+    def add_image_slide(self, title, image_path):
+        """Adds a slide with a large centered image, maintaining base design frame."""
+        slide_layout = self.prs.slide_layouts[6]
+        slide = self.prs.slides.add_slide(slide_layout)
+        self._add_base_design(slide, title)
+
+        if os.path.exists(image_path):
+            # Calculate sizing to fit nicely within the frame
+            top = Inches(1.6)
+            width = self.prs.slide_width - Inches(2.0)
+            pic = slide.shapes.add_picture(image_path, Inches(1.0), top, width=width)
+            
+            # Center vertically within the remaining space if possible
+            remaining_height = self.prs.slide_height - top - Inches(0.5)
+            if pic.height < remaining_height:
+                pic.top = top + (remaining_height - pic.height) // 2
+
     def add_content_slide(self, title, items):
         slide_layout = self.prs.slide_layouts[6]
         slide = self.prs.slides.add_slide(slide_layout)
         self._add_base_design(slide, title)
 
-        # Content area - Balanced margins and centered vertical anchoring
+        # Content area
         left = Inches(0.8)
         top = Inches(1.6)
         width = self.prs.slide_width - Inches(1.6)
@@ -160,14 +177,14 @@ class PresentationGenerator:
         txBox = slide.shapes.add_textbox(left, top, width, height)
         tf = txBox.text_frame
         tf.word_wrap = True
-        tf.vertical_anchor = MSO_ANCHOR.MIDDLE # This ensures text sits in the middle of the available height
+        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
 
         for item in items:
             p = tf.add_paragraph()
             p.text = item
             p.font.name = FONT_SANS
-            p.font.size = Pt(22) # Slightly increased font size for readability
-            p.space_after = Pt(24) # Increased spacing between items
+            p.font.size = Pt(22)
+            p.space_after = Pt(24)
             p.level = 0
             if item.startswith("  "):
                 p.level = 1
@@ -208,30 +225,26 @@ def generate_banking_presentation():
 
     # --- Section 2 ---
     gen.add_transition_slide(2, sections[1])
-    gen.add_content_slide(sections[1], [
+    
+    # Visual Overview: Timeline
+    gen.add_image_slide(sections[1], "assets/history_timeline.png")
+
+    gen.add_content_slide("2. 銀行の歴史（欧州の起源と近代日本）", [
         "■ ヨーロッパの起源",
         "  ・中世、金細工師（ゴールドスミス）が金を預かった「預かり証」が紙幣の原型に。",
-        "  ・利息を取ることが禁忌とされていた時代、ユダヤ人が金融の先駆者となった。",
-        "■ 信頼のシステム化",
-        "  ・個人の信用から、組織・制度としての信用への転換。"
-    ])
-
-    gen.add_content_slide("2. 銀行の歴史（日本における成立）", [
-        "■ 日本銀行の設立",
-        "  ・1882年（明治15年）、中央銀行として日本銀行が誕生。",
+        "■ 日本銀行の設立（1882年）",
         "  ・インフレの抑制と通貨価値の安定という重大な使命。",
         "■ 殖産興業と金融",
-        "  ・明治の近代化政策を支えるため、多くの国立銀行（後の民間銀行）も設立された。"
+        "  ・明治の近代化政策を支えるため、多くの国立銀行が設立された。"
     ])
 
     gen.add_content_slide("2. 銀行の歴史（高度成長〜平成再編）", [
         "■ 高度経済成長期",
         "  ・長期信用銀行（長銀）などが設備投資を支え、奇跡の成長を支えた。",
-        "■ バブルの狂奔と崩壊",
-        "  ・過剰融資による不良債権問題。長銀や住専の破綻と国有化。",
-        "■ 平成から令和へ",
-        "  ・金融ビッグバンを経て、大規模な合併（メガバンク誕生）へ。",
-        "  ・異業種参入と持ち株会社制の解禁。"
+        "■ バブルの狂奔と崩壊（1990年前後）",
+        "  ・過剰融資による不良債権問題。大規模な合併（メガバンク誕生）へ。",
+        "■ 異業種参入と再編",
+        "  ・金融ビッグバンを経て、店舗を持たないネット銀行なども台頭。"
     ])
 
     # --- Section 3 ---
@@ -260,7 +273,7 @@ def generate_banking_presentation():
         "1. 預金業務：大切な資産を安全に預かる。",
         "2. 貸出業務：成長を望む企業や個人へ資金を貸し付ける。",
         "   ・証書貸付、手形割引など。",
-        "3. 為替業務：現金を運ばず、安全・迅速に決済を完了させる。"
+        "3. 為替業務：現金を運ばず、安全、迅速に決済を完了させる。"
     ])
 
     gen.add_content_slide("4. 収益の源泉：利ざやと信用創造", [
@@ -268,7 +281,7 @@ def generate_banking_presentation():
         "  ・貸出金利（受取）と預金利息（支払）の差額こそが利益。",
         "■ 信用創造機能",
         "  ・預金と貸出を繰り返すことで、世の中の通貨量を増大させる。",
-        "  ・支払準備制度により安全性を担保しつつ、経済を膨らませる機能。"
+        "  ・経済を膨らませ、社会の成長を加速させる独自の機能。"
     ])
 
     # --- Section 5 ---
