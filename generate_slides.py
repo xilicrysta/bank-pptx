@@ -138,7 +138,7 @@ def generate_banking_presentation():
     gen.add_cover_slide("assets/cover_bg.png")
 
     # Slide 2: Agenda
-    gen.add_content_slide("本日のアジェンダ", [
+    gen.add_content_slide("本日の目次", [
         "1. 銀行の本質的役割",
         "2. 歴史が紡ぐ「信頼」の重み",
         "3. 現代の銀行プレイヤーたち",
