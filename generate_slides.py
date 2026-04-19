@@ -2,7 +2,7 @@ import os
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
-from pptx.enum.text import PP_ALIGN
+from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.enum.shapes import MSO_SHAPE
 
 # --- Constants & Design System ---
@@ -79,7 +79,7 @@ class PresentationGenerator:
             rect.fill.fore_color.rgb = NAVY
             rect.line.visible = False
 
-        # Title Block
+        # Title Block - Positioned slightly higher for balance
         title_top = Inches(1.8)
         title_box = slide.shapes.add_textbox(Inches(0.5), title_top, Inches(12), Inches(2))
         tf = title_box.text_frame
@@ -104,7 +104,6 @@ class PresentationGenerator:
         accent.line.visible = False
 
     def add_transition_slide(self, chapter_num, title):
-        """Adds a high-impact section divider slide with NAVY background."""
         slide_layout = self.prs.slide_layouts[6]
         slide = self.prs.slides.add_slide(slide_layout)
         
@@ -114,7 +113,7 @@ class PresentationGenerator:
         rect.fill.fore_color.rgb = NAVY
         rect.line.visible = False
 
-        # Chapter Number (e.g., Section 01)
+        # Chapter Number
         num_box = slide.shapes.add_textbox(0, Inches(2.2), self.prs.slide_width, Inches(1))
         tf_num = num_box.text_frame
         p_num = tf_num.add_paragraph()
@@ -146,22 +145,23 @@ class PresentationGenerator:
         slide = self.prs.slides.add_slide(slide_layout)
         self._add_base_design(slide, title)
 
-        # Content area
+        # Content area - Balanced margins and centered vertical anchoring
         left = Inches(0.8)
-        top = Inches(1.8)
+        top = Inches(1.6)
         width = self.prs.slide_width - Inches(1.6)
-        height = self.prs.slide_height - Inches(2.5)
+        height = self.prs.slide_height - Inches(2.3)
         
         txBox = slide.shapes.add_textbox(left, top, width, height)
         tf = txBox.text_frame
         tf.word_wrap = True
+        tf.vertical_anchor = MSO_ANCHOR.MIDDLE # This ensures text sits in the middle of the available height
 
         for item in items:
             p = tf.add_paragraph()
             p.text = item
             p.font.name = FONT_SANS
-            p.font.size = Pt(20)
-            p.space_after = Pt(12)
+            p.font.size = Pt(22) # Slightly increased font size for readability
+            p.space_after = Pt(24) # Increased spacing between items
             p.level = 0
             if item.startswith("  "):
                 p.level = 1
@@ -172,7 +172,6 @@ class PresentationGenerator:
         self.prs.save(filename)
 
 def generate_banking_presentation():
-    # Structural titles
     sections = [
         "銀行の本質的役割と定義",
         "銀行の歴史：中世から現代までの変遷",
@@ -223,7 +222,7 @@ def generate_banking_presentation():
         "■ 高度経済成長期",
         "  ・長期信用銀行（長銀）などが設備投資を支え、奇跡の成長を支えた。",
         "■ バブルの狂奔と崩壊",
-        "  ・过剰融資による不良債権問題。長銀や住専の破綻と国有化。",
+        "  ・過剰融資による不良債権問題。長銀や住専の破綻と国有化。",
         "■ 平成から令和へ",
         "  ・金融ビッグバンを経て、大規模な合併（メガバンク誕生）へ。",
         "  ・異業種参入と持ち株会社制の解禁。"
@@ -235,7 +234,7 @@ def generate_banking_presentation():
         "■ 日本銀行（中央銀行）",
         "  ・「銀行の銀行」「政府の銀行」「発券銀行」。",
         "■ 都市銀行（メガバンク）",
-        "  ・三菱UFJ、三井住友、みずほ. 巨大な資本力で国・世界を支える。",
+        "  ・三菱UFJ、三井住友、みずほ。巨大な資本力で国・世界を支える。",
         "■ 地方銀行・第二地銀",
         "  ・「地域密着」。地元企業との信頼関係（リレーションシップ）が命。"
     ])
