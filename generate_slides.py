@@ -65,7 +65,7 @@ class PresentationGenerator:
         slide = self.prs.slides.add_slide(slide_layout)
         
         if image_path and os.path.exists(image_path):
-            # Background image (Nano Banana Pro usage specified area)
+            # Background image
             slide.shapes.add_picture(image_path, 0, 0, width=self.prs.slide_width, height=self.prs.slide_height)
             # Overlay
             overlay = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, self.prs.slide_width * 0.5, self.prs.slide_height)
@@ -79,10 +79,12 @@ class PresentationGenerator:
             rect.fill.fore_color.rgb = NAVY
             rect.line.visible = False
 
-        # Title
-        title_box = slide.shapes.add_textbox(Inches(0.5), Inches(2.5), Inches(6), Inches(2))
+        # Title Block - Adjusted vertical position (Inches(2.5) -> Inches(1.8))
+        title_top = Inches(1.8)
+        title_box = slide.shapes.add_textbox(Inches(0.5), title_top, Inches(12), Inches(2))
         tf = title_box.text_frame
         tf.word_wrap = True
+        
         p = tf.add_paragraph()
         p.text = self.title
         p.font.name = FONT_SANS
@@ -93,10 +95,10 @@ class PresentationGenerator:
         p2 = tf.add_paragraph()
         p2.text = self.subtitle
         p2.font.name = FONT_SANS
-        p2.font.size = Pt(24)
+        p2.font.size = Pt(20) # Shrink font size to keep on one line
         p2.font.color.rgb = BEIGE
         
-        accent = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.5), Inches(2.2), Inches(1.0), Inches(0.1))
+        accent = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.5), title_top - Inches(0.3), Inches(1.0), Inches(0.1))
         accent.fill.solid()
         accent.fill.fore_color.rgb = BEIGE
         accent.line.visible = False
@@ -106,7 +108,7 @@ class PresentationGenerator:
         slide = self.prs.slides.add_slide(slide_layout)
         self._add_base_design(slide, title)
 
-        # Content area (Simplified: No images on content slides)
+        # Content area
         left = Inches(0.8)
         top = Inches(1.8)
         width = self.prs.slide_width - Inches(1.6)
@@ -134,21 +136,21 @@ class PresentationGenerator:
 def generate_banking_presentation():
     gen = PresentationGenerator("銀行業界の基礎知識", "〜 経済の心臓が刻む、信頼と変革の物語 〜")
     
-    # Slide 1: Cover (Nano Banana Pro usage specified)
+    # Slide 1: Cover
     gen.add_cover_slide("assets/cover_bg.png")
 
-    # Slide 2: Agenda
+    # Slide 2: Table of Contents (Structural re-design based on content)
     gen.add_content_slide("本日の目次", [
-        "1. 銀行の本質的役割",
-        "2. 歴史が紡ぐ「信頼」の重み",
-        "3. 現代の銀行プレイヤーたち",
-        "4. ビジネスモデルと収益の仕組み",
-        "5. 業界が直面する大きな課題",
-        "6. 銀行の明日：デジタルとの融合"
+        "1. 銀行の本質的役割と定義",
+        "2. 銀行の歴史：中世から現代までの変遷",
+        "3. 銀行の種類：役割に応じた多様なプレイヤー",
+        "4. 3大業務と銀行収益の仕組み",
+        "5. 業界を取り巻く現状と直面する課題",
+        "6. 未来への展望：DXと新たな金融の形"
     ])
 
     # Section 1: Definition
-    gen.add_content_slide("1. 銀行とは何か - 経済の心臓", [
+    gen.add_content_slide("1. 銀行の本質的役割と定義", [
         "■ 金融（資金の融通）のプロフェッショナル",
         "  ・お金が余っている人から、足りない人へ橋渡しを行う。",
         "■ 間接金融の中核",
@@ -158,7 +160,7 @@ def generate_banking_presentation():
     ])
 
     # Section 2: History
-    gen.add_content_slide("銀行の歴史：起源と中世ヨーロッパ", [
+    gen.add_content_slide("2. 銀行の歴史：中世から現代までの変遷", [
         "■ ヨーロッパの起源",
         "  ・中世、金細工師（ゴールドスミス）が金を預かった「預かり証」が紙幣の原型に。",
         "  ・利息を取ることが禁忌とされていた時代、ユダヤ人が金融の先駆者となった。",
@@ -166,7 +168,7 @@ def generate_banking_presentation():
         "  ・個人の信用から、組織・制度としての信用への転換。"
     ])
 
-    gen.add_content_slide("日本における成立：近代化の礎", [
+    gen.add_content_slide("2. 銀行の歴史（日本における成立）", [
         "■ 日本銀行の設立",
         "  ・1882年（明治15年）、中央銀行として日本銀行が誕生。",
         "  ・インフレの抑制と通貨価値の安定という重大な使命。",
@@ -174,7 +176,7 @@ def generate_banking_presentation():
         "  ・明治の近代化政策を支えるため、多くの国立銀行（後の民間銀行）も設立された。"
     ])
 
-    gen.add_content_slide("激動の現代史：成長と壊滅、そして再編", [
+    gen.add_content_slide("2. 銀行の歴史（高度成長〜平成再編）", [
         "■ 高度経済成長期",
         "  ・長期信用銀行（長銀）などが設備投資を支え、奇跡の成長を支えた。",
         "■ バブルの狂奔と崩壊",
@@ -185,7 +187,7 @@ def generate_banking_presentation():
     ])
 
     # Section 3: Types
-    gen.add_content_slide("銀行の種類：それぞれの役割と特性", [
+    gen.add_content_slide("3. 銀行の種類：役割に応じた多様なプレイヤー", [
         "■ 日本銀行（中央銀行）",
         "  ・「銀行の銀行」「政府の銀行」「発券銀行」。",
         "■ 都市銀行（メガバンク）",
@@ -194,7 +196,7 @@ def generate_banking_presentation():
         "  ・「地域密着」。地元企業との信頼関係（リレーションシップ）が命。"
     ])
 
-    gen.add_content_slide("多様化するプレイヤー：デジタルへの傾斜", [
+    gen.add_content_slide("3. 銀行の種類（デジタル・専門特化）", [
         "■ ネット銀行",
         "  ・楽天、住信SBIなど。店舗を持たず利便性と低コストを追求。",
         "■ 信託銀行",
@@ -204,14 +206,14 @@ def generate_banking_presentation():
     ])
 
     # Section 4: Business Model
-    gen.add_content_slide("銀行の3大業務：社会を回す3つの柱", [
+    gen.add_content_slide("4. 3大業務と銀行収益の仕組み", [
         "1. 預金業務：大切な資産を安全に預かる。",
         "2. 貸出業務：成長を望む企業や個人へ資金を貸し付ける。",
         "   ・証書貸付、手形割引など。",
         "3. 為替業務：現金を運ばず、安全・迅速に決済を完了させる。"
     ])
 
-    gen.add_content_slide("収益の源泉：利ざやと信用創造", [
+    gen.add_content_slide("4. 収益の源泉：利ざやと信用創造", [
         "■ 「利ざや」の仕組み",
         "  ・貸出金利（受取）と預金利息（支払）の差額こそが利益。",
         "■ 信用創造機能",
@@ -220,7 +222,7 @@ def generate_banking_presentation():
     ])
 
     # Section 5: Issues
-    gen.add_content_slide("現状の課題：かつてない逆風", [
+    gen.add_content_slide("5. 業界を取り巻く現状と直面する課題", [
         "■ 超低金利環境の長期化",
         "  ・利ざやの縮小により、旧来の預貸モデルの限界が露呈。",
         "■ プラットフォーマーとの競争",
@@ -230,7 +232,7 @@ def generate_banking_presentation():
     ])
 
     # Section 6: Future
-    gen.add_content_slide("今後の展望：変革と新たな価値提供", [
+    gen.add_content_slide("6. 未来への展望：DXと新たな金融の形", [
         "■ バンキング・アズ・ア・サービス(BaaS)",
         "  ・金融機能をパーツとして他業種に提供するプラットフォーム化。",
         "■ 融合するテクノロジー：Olive、デジタル通貨",
