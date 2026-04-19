@@ -173,12 +173,12 @@ class PresentationGenerator:
 
 def generate_banking_presentation():
     sections = [
-        "銀行の本質的役割と定義",
-        "銀行の歴史：中世から現代までの変遷",
-        "銀行の種類：役割に応じた多様なプレイヤー",
-        "3大業務と銀行収益の仕組み",
-        "業界を取り巻く現状と直面する課題",
-        "未来への展望：DXと新たな金融の形"
+        "1. 銀行の本質的役割と定義",
+        "2. 銀行の歴史：中世から現代までの変遷",
+        "3. 銀行の種類：役割に応じた多様なプレイヤー",
+        "4. 3大業務と銀行収益の仕組み",
+        "5. 業界を取り巻く現状と直面する課題",
+        "6. 未来への展望：DXと新たな金融の形"
     ]
 
     gen = PresentationGenerator("銀行業界の基礎知識", "〜 経済の心臓が刻む、信頼と変革の物語 〜")
@@ -191,7 +191,7 @@ def generate_banking_presentation():
 
     # --- Section 1 ---
     gen.add_transition_slide(1, sections[0])
-    gen.add_content_slide(f"1. {sections[0]}", [
+    gen.add_content_slide(sections[0], [
         "■ 金融（資金の融通）のプロフェッショナル",
         "  ・お金が余っている人から、足りない人へ橋渡しを行う。",
         "■ 間接金融の中核",
@@ -202,7 +202,7 @@ def generate_banking_presentation():
 
     # --- Section 2 ---
     gen.add_transition_slide(2, sections[1])
-    gen.add_content_slide(f"2. {sections[1]}", [
+    gen.add_content_slide(sections[1], [
         "■ ヨーロッパの起源",
         "  ・中世、金細工師（ゴールドスミス）が金を預かった「預かり証」が紙幣の原型に。",
         "  ・利息を取ることが禁忌とされていた時代、ユダヤ人が金融の先駆者となった。",
@@ -230,7 +230,7 @@ def generate_banking_presentation():
 
     # --- Section 3 ---
     gen.add_transition_slide(3, sections[2])
-    gen.add_content_slide(f"3. {sections[2]}", [
+    gen.add_content_slide(sections[2], [
         "■ 日本銀行（中央銀行）",
         "  ・「銀行の銀行」「政府の銀行」「発券銀行」。",
         "■ 都市銀行（メガバンク）",
@@ -250,7 +250,7 @@ def generate_banking_presentation():
 
     # --- Section 4 ---
     gen.add_transition_slide(4, sections[3])
-    gen.add_content_slide(f"4. {sections[3]}", [
+    gen.add_content_slide(sections[3], [
         "1. 預金業務：大切な資産を安全に預かる。",
         "2. 貸出業務：成長を望む企業や個人へ資金を貸し付ける。",
         "   ・証書貸付、手形割引など。",
@@ -267,7 +267,7 @@ def generate_banking_presentation():
 
     # --- Section 5 ---
     gen.add_transition_slide(5, sections[4])
-    gen.add_content_slide(f"5. {sections[4]}", [
+    gen.add_content_slide(sections[4], [
         "■ 超低金利環境の長期化",
         "  ・利ざやの縮小により、旧来の預貸モデルの限界が露呈。",
         "■ プラットフォーマーとの競争",
@@ -278,7 +278,7 @@ def generate_banking_presentation():
 
     # --- Section 6 ---
     gen.add_transition_slide(6, sections[5])
-    gen.add_content_slide(f"6. {sections[5]}", [
+    gen.add_content_slide(sections[5], [
         "■ バンキング・アズ・ア・サービス(BaaS)",
         "  ・金融機能をパーツとして他業種に提供するプラットフォーム化。",
         "■ 融合するテクノロジー：Olive、デジタル通貨",
