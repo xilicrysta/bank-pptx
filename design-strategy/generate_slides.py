@@ -129,7 +129,7 @@ class PresentationGenerator:
         
         if body_items:
             # Widened and shifted left to prevent overflow
-            body_box = slide.shapes.add_textbox(Inches(0.8), Inches(3.2), Inches(11.5), Inches(3.5))
+            body_box = slide.shapes.add_textbox(Inches(0.8), Inches(3.2), Inches(11.7), Inches(3.5))
             tf_b = body_box.text_frame
             tf_b.word_wrap = True
             tf_b.vertical_anchor = MSO_ANCHOR.TOP
@@ -137,7 +137,7 @@ class PresentationGenerator:
                 p = tf_b.add_paragraph()
                 p.text = f"• {item}"
                 p.font.name = FONT_SANS
-                p.font.size = Pt(21) # Further reduced to ensure safety
+                p.font.size = Pt(21) 
                 p.space_after = Pt(14)
                 p.font.color.rgb = TEXT_DARK
 
@@ -327,13 +327,15 @@ class PresentationGenerator:
         p.font.bold = True
         p.font.color.rgb = TEXT_DARK
         p.alignment = PP_ALIGN.CENTER
-        body_box = slide.shapes.add_textbox(Inches(1.5), Inches(2.5), Inches(10), Inches(4))
+        # Shifted left and widened with word wrap enabled
+        body_box = slide.shapes.add_textbox(Inches(0.8), Inches(2.5), Inches(11.7), Inches(4))
         tf = body_box.text_frame
+        tf.word_wrap = True
         for item in items:
             p = tf.add_paragraph()
             p.text = f"✔ {item}"
-            p.font.size = Pt(28)
-            p.space_after = Pt(24)
+            p.font.size = Pt(22) # Reduced from 28 to prevent overflow
+            p.space_after = Pt(20)
             p.font.color.rgb = TEXT_DARK
 
     def save(self, filename):
