@@ -64,7 +64,7 @@ class StrategyPresentationGenerator:
         # Center Content
         title_box = slide.shapes.add_textbox(Inches(1), Inches(2.5), Inches(11.333), Inches(2))
         tf = title_box.text_frame
-        p = tf.add_paragraph()
+        p = tf.paragraphs[0]
         p.text = self.title
         p.font.name = FONT_SANS
         p.font.size = Pt(54)
@@ -93,7 +93,7 @@ class StrategyPresentationGenerator:
         # Large Number
         num_box = slide.shapes.add_textbox(Inches(1), Inches(2), Inches(11.333), Inches(1.5))
         tf_n = num_box.text_frame
-        p_n = tf_n.add_paragraph()
+        p_n = tf_n.paragraphs[0]
         p_n.text = f"SECTION {section_num:02d}"
         p_n.font.name = FONT_SANS
         p_n.font.size = Pt(60)
@@ -104,7 +104,7 @@ class StrategyPresentationGenerator:
         # Title
         title_box = slide.shapes.add_textbox(Inches(1), Inches(3.8), Inches(11.333), Inches(1.5))
         tf_t = title_box.text_frame
-        p_t = tf_t.add_paragraph()
+        p_t = tf_t.paragraphs[0]
         p_t.text = title
         p_t.font.name = FONT_SANS
         p_t.font.size = Pt(40)
@@ -121,7 +121,7 @@ class StrategyPresentationGenerator:
         # Main Message (Large)
         msg_box = slide.shapes.add_textbox(Inches(1), Inches(1.8), Inches(11.333), Inches(1.2))
         tf_m = msg_box.text_frame
-        p_m = tf_m.add_paragraph()
+        p_m = tf_m.paragraphs[0]
         p_m.text = message
         p_m.font.name = FONT_SANS
         p_m.font.size = Pt(36)
