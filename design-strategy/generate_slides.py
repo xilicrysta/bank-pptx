@@ -135,8 +135,8 @@ class PresentationGenerator:
                 p = tf_b.add_paragraph()
                 p.text = f"• {item}"
                 p.font.name = FONT_SANS
-                p.font.size = Pt(24)
-                p.space_after = Pt(20)
+                p.font.size = Pt(22) # Slightly reduced to prevent overflow (24 -> 22)
+                p.space_after = Pt(16)
                 p.font.color.rgb = TEXT_DARK
 
     def add_diagram_slide(self, title, message, diagram_func):
@@ -228,10 +228,22 @@ class PresentationGenerator:
         # Yield
         y1 = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, base_x, base_y - Inches(4.0), width, Inches(4.0))
         y1.fill.solid()
-        y1.fill.fore_color.rgb = TEXT_DARK
+        y1.fill.fore_color.rgb = ACCENT_YELLOW # Changed to yellow for visibility
         y1.text_frame.paragraphs[0].text = "貸出利回り"
-        y1.text_frame.paragraphs[0].font.color.rgb = WHITE
-        # Cost
+        y1.text_frame.paragraphs[0].font.color.rgb = TEXT_DARK
+        y1.text_frame.paragraphs[0].font.bold = True
+        
+        # Cost Box (Explicit box added above Deposit Interest as requested)
+        cost_top = base_y - Inches(1.5)
+        c_box = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, base_x + width + Inches(0.5), cost_top, width, Inches(0.5))
+        c_box.fill.solid()
+        c_box.fill.fore_color.rgb = ACCENT_YELLOW
+        c_box.line.visible = False
+        c_box.text_frame.paragraphs[0].text = "システム・運営コスト"
+        c_box.text_frame.paragraphs[0].font.size = Pt(12)
+        c_box.text_frame.paragraphs[0].font.color.rgb = TEXT_DARK
+
+        # Cost (Deposit Interest)
         y2 = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, base_x + width + Inches(0.5), base_y - Inches(1.0), width, Inches(1.0))
         y2.fill.solid()
         y2.fill.fore_color.rgb = SUB_GREY
@@ -269,12 +281,13 @@ class PresentationGenerator:
         el.text_frame.paragraphs[0].text = "純資産"
         el.fill.solid()
         el.fill.fore_color.rgb = TEXT_DARK
-        # Red Label
-        lbl = slide.shapes.add_textbox(b_x + w/2 + Inches(0.5), y + h/2, Inches(2.5), Inches(1.0))
+        # Red Label (Moved to bottom to avoid overlap)
+        lbl = slide.shapes.add_textbox(b_x, y + h + Inches(0.2), Inches(5.0), Inches(0.5))
         p = lbl.text_frame.paragraphs[0]
-        p.text = "★預金は「預かりもの」\nであり負債となる"
+        p.text = "★銀行にとって、預金は「預かりもの」であり負債となる"
         p.font.color.rgb = RGBColor(0xFF, 0, 0)
-        p.font.size = Pt(14)
+        p.font.size = Pt(16)
+        p.font.bold = True
 
     def draw_industry_map(self, slide):
         layers = [
@@ -294,8 +307,11 @@ class PresentationGenerator:
             box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(4.5), y, Inches(7.5), Inches(0.8))
             box.fill.background()
             box.line.color.rgb = SUB_GREY
-            box.text_frame.paragraphs[0].text = desc
-            box.text_frame.paragraphs[0].alignment = PP_ALIGN.LEFT
+            tf_desc = box.text_frame
+            p_desc = tf_desc.paragraphs[0]
+            p_desc.text = desc
+            p_desc.font.color.rgb = TEXT_DARK # Clear visibility
+            p_desc.alignment = PP_ALIGN.LEFT
 
     def add_summary_slide(self, items):
         slide = self.prs.slides.add_slide(self.prs.slide_layouts[6])
@@ -354,8 +370,8 @@ def generate_strategic_presentation():
     gen.add_transition_slide(4, sections[3])
     gen.add_message_slide("Section 04", "フィンテックの台頭と決済の脱銀行化", 
                          ["スマートフォン決済の急速な普及。銀行口座が『隠れたインフラ』へ。", "プラットフォーマー（PayPay、楽天など）による顧客接点の占有。", "レンディング（融資）領域へのAI・データ活用型企業の参入。"])
-    gen.add_message_slide("Section 04", "異業種参入：Embedded Finance（組み込み金融）", 
-                         ["『銀行に行く』という行為の消失。あらゆるサービスに金融が溶け込む。", "スターバックスやAppleが、実質的な金融機能を提供。", "伝統的銀行から顧客（データと接点）が奪われる『中抜き』の発生。"])
+    gen.add_message_slide("Section 04", "異業種参入：あらゆるサービスへの金融機能の融合", 
+                         ["『銀行に行く』という行為の消失。生活のあらゆる場面に金融が溶け込む。", "スターバックスやAppleが、自社の顧客向けに便利な金融サービスを提供。", "伝統的銀行から、顧客との接点が奪われる『中抜き』の発生。"])
     gen.add_transition_slide(5, sections[4])
     gen.add_message_slide("Section 05", "DXの本質：デジタルによる価値の再定義", 
                          ["単なるネットバンキング化ではなく、UI/UXの極致を追求。", "蓄積されたビッグデータを活用した、高度な与信とコンサルティング。", "顧客のライフステージに合わせたシームレスな解決策の提案。"])
