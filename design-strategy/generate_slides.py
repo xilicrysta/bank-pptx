@@ -137,8 +137,8 @@ class PresentationGenerator:
                 p = tf_b.add_paragraph()
                 p.text = f"• {item}"
                 p.font.name = FONT_SANS
-                p.font.size = Pt(21) 
-                p.space_after = Pt(14)
+                p.font.size = Pt(23) # Increased from 21 to improve readability
+                p.space_after = Pt(16)
                 p.font.color.rgb = TEXT_DARK
 
     def add_diagram_slide(self, title, message, diagram_func):
@@ -334,8 +334,8 @@ class PresentationGenerator:
         for item in items:
             p = tf.add_paragraph()
             p.text = f"✔ {item}"
-            p.font.size = Pt(22) # Reduced from 28 to prevent overflow
-            p.space_after = Pt(20)
+            p.font.size = Pt(25) # Increased from 22 for better balance
+            p.space_after = Pt(22)
             p.font.color.rgb = TEXT_DARK
 
     def save(self, filename):
