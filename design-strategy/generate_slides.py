@@ -13,9 +13,9 @@ SUB_GREY = RGBColor(0x82, 0x82, 0x82)
 WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 
 FONT_SANS = "Hiragino Sans"
-FONT_SANS_BOLD = "Hiragino Sans" # Using same for now
+FONT_SANS_BOLD = "Hiragino Sans"
 
-class StrategyPresentationGenerator:
+class PresentationGenerator:
     def __init__(self, title, subtitle):
         self.prs = Presentation()
         self.prs.slide_width = Inches(13.333)
@@ -25,7 +25,6 @@ class StrategyPresentationGenerator:
 
     def _add_frame(self, slide, color=TEXT_DARK):
         """Adds a thick rounded rectangle frame characteristic of the design."""
-        # Main Frame
         frame_margin = Inches(0.2)
         frame = slide.shapes.add_shape(
             MSO_SHAPE.ROUNDED_RECTANGLE, 
@@ -37,7 +36,6 @@ class StrategyPresentationGenerator:
         line = frame.line
         line.color.rgb = color
         line.width = Pt(4)
-        # Adjust corner radius to be more subtle/modern
         frame.adjustments[0] = 0.02
 
     def _add_pill_label(self, slide, text, x, y, bg_color=ACCENT_YELLOW, text_color=TEXT_DARK):
@@ -46,7 +44,7 @@ class StrategyPresentationGenerator:
         pill.fill.solid()
         pill.fill.fore_color.rgb = bg_color
         pill.line.visible = False
-        pill.adjustments[0] = 0.5 # Max roundness
+        pill.adjustments[0] = 0.5 
         
         tf = pill.text_frame
         p = tf.paragraphs[0]
@@ -61,7 +59,6 @@ class StrategyPresentationGenerator:
         slide = self.prs.slides.add_slide(self.prs.slide_layouts[6])
         self._add_frame(slide)
         
-        # Center Content
         title_box = slide.shapes.add_textbox(Inches(1), Inches(2.5), Inches(11.333), Inches(2))
         tf = title_box.text_frame
         p = tf.paragraphs[0]
@@ -79,7 +76,6 @@ class StrategyPresentationGenerator:
         p2.font.color.rgb = SUB_GREY
         p2.alignment = PP_ALIGN.CENTER
         
-        # Decorative Yellow Bar
         bar = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(5.5), Inches(4.5), Inches(2.3), Inches(0.15))
         bar.fill.solid()
         bar.fill.fore_color.rgb = ACCENT_YELLOW
@@ -87,25 +83,29 @@ class StrategyPresentationGenerator:
 
     def add_transition_slide(self, section_num, title):
         slide = self.prs.slides.add_slide(self.prs.slide_layouts[6])
-        # Invert colors for transition? Keep frame
         self._add_frame(slide, color=ACCENT_YELLOW)
         
-        # Large Number
         num_box = slide.shapes.add_textbox(Inches(1), Inches(2), Inches(11.333), Inches(1.5))
         tf_n = num_box.text_frame
         p_n = tf_n.paragraphs[0]
-        p_n.text = f"SECTION {section_num:02d}"
+        p_n.text = f"Section {section_num:02d}"  # Unified naming
         p_n.font.name = FONT_SANS
         p_n.font.size = Pt(60)
         p_n.font.bold = True
         p_n.font.color.rgb = ACCENT_YELLOW
         p_n.alignment = PP_ALIGN.CENTER
         
-        # Title
+        # Strip numbering from title if present (parity with h side)
+        display_title = title
+        if ". " in title:
+            parts = title.split(". ", 1)
+            if parts[0].isdigit():
+                display_title = parts[1]
+
         title_box = slide.shapes.add_textbox(Inches(1), Inches(3.8), Inches(11.333), Inches(1.5))
         tf_t = title_box.text_frame
         p_t = tf_t.paragraphs[0]
-        p_t.text = title
+        p_t.text = display_title
         p_t.font.name = FONT_SANS
         p_t.font.size = Pt(40)
         p_t.font.bold = True
@@ -113,12 +113,10 @@ class StrategyPresentationGenerator:
         p_t.alignment = PP_ALIGN.CENTER
 
     def add_message_slide(self, title, message, body_items=None):
-        """1 Slide 1 Message style slide."""
         slide = self.prs.slides.add_slide(self.prs.slide_layouts[6])
         self._add_frame(slide)
         self._add_pill_label(slide, title, Inches(0.5), Inches(0.5))
         
-        # Main Message (Large)
         msg_box = slide.shapes.add_textbox(Inches(1), Inches(1.8), Inches(11.333), Inches(1.2))
         tf_m = msg_box.text_frame
         p_m = tf_m.paragraphs[0]
@@ -132,7 +130,7 @@ class StrategyPresentationGenerator:
         if body_items:
             body_box = slide.shapes.add_textbox(Inches(1.5), Inches(3.2), Inches(10), Inches(3.5))
             tf_b = body_box.text_frame
-            tf_b.vertical_anchor = MSO_ANCHOR.TOP # Start from top
+            tf_b.vertical_anchor = MSO_ANCHOR.TOP
             for item in body_items:
                 p = tf_b.add_paragraph()
                 p.text = f"• {item}"
@@ -142,33 +140,25 @@ class StrategyPresentationGenerator:
                 p.font.color.rgb = TEXT_DARK
 
     def add_diagram_slide(self, title, message, diagram_func):
-        """Slide with a title, a message, and a programmatic diagram."""
         slide = self.prs.slides.add_slide(self.prs.slide_layouts[6])
         self._add_frame(slide)
         self._add_pill_label(slide, title, Inches(0.5), Inches(0.5))
         
-        # Message
         msg_box = slide.shapes.add_textbox(Inches(0.8), Inches(1.2), Inches(11.7), Inches(0.8))
-        p_m = msg_box.text_frame.add_paragraph()
+        p_m = msg_box.text_frame.paragraphs[0]
         p_m.text = message
         p_m.font.name = FONT_SANS
         p_m.font.size = Pt(28)
         p_m.font.bold = True
         p_m.font.color.rgb = TEXT_DARK
         
-        # Execute diagram function
         diagram_func(slide)
 
-    # --- Specialized Diagrams ---
-    
     def draw_megabank_flow(self, slide):
-        """Diagram of Megabank re-organization."""
         y = Inches(3.0)
         width = Inches(2.5)
         height = Inches(0.8)
         gap = Inches(0.5)
-        
-        # Headers
         headers = ["旧財閥・大型店", "合併・統合の流れ", "現3大メガバンク"]
         for i, h in enumerate(headers):
             box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(1.5 + i*4), y - Inches(1), Inches(3), Inches(0.5))
@@ -179,30 +169,22 @@ class StrategyPresentationGenerator:
             tf.paragraphs[0].text = h
             tf.paragraphs[0].font.color.rgb = WHITE
             tf.paragraphs[0].font.size = Pt(14)
-
-        # Content
         groups = [
-            ("第一勧銀・富士・日本興業", "みずほFG", RGBColor(0x30, 0x3F, 0x9F)), # Blue
-            ("三菱・東京・UFJ", "三菱UFJ FG", RGBColor(0xD3, 0x2F, 0x2F)), # Red
-            ("住友・さくら", "三井住友 FG", RGBColor(0x38, 0x8E, 0x3C)) # Green
+            ("第一勧銀・富士・日本興業", "みずほFG", RGBColor(0x30, 0x3F, 0x9F)),
+            ("三菱・東京・UFJ", "三菱UFJ FG", RGBColor(0xD3, 0x2F, 0x2F)),
+            ("住友・さくら", "三井住友 FG", RGBColor(0x38, 0x8E, 0x3C))
         ]
-        
         for i, (old, new, color) in enumerate(groups):
-            # Old
             b1 = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(1.5), y + i*Inches(1.2), Inches(3.5), height)
             b1.fill.solid()
             b1.fill.fore_color.rgb = SUB_GREY
             b1.line.visible = False
             b1.text_frame.paragraphs[0].text = old
             b1.text_frame.paragraphs[0].font.size = Pt(16)
-            
-            # Arrow
             arrow = slide.shapes.add_shape(MSO_SHAPE.RIGHT_ARROW, Inches(6), y + i*Inches(1.2) + Inches(0.2), Inches(1), Inches(0.4))
             arrow.fill.solid()
             arrow.fill.fore_color.rgb = ACCENT_YELLOW
             arrow.line.visible = False
-            
-            # New
             b2 = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(8), y + i*Inches(1.2), Inches(3.5), height)
             b2.fill.solid()
             b2.fill.fore_color.rgb = color
@@ -213,21 +195,16 @@ class StrategyPresentationGenerator:
             b2.text_frame.paragraphs[0].font.color.rgb = WHITE
 
     def draw_credit_creation_diagram(self, slide):
-        """Diagram showing Step-by-Step Credit Creation."""
         start_y = Inches(3.0)
         size = Inches(2.2)
         gap = Inches(0.4)
-        
         steps = ["A銀行への預金\n(100万円)", "B社への貸出\n(90万円)", "C銀行への預金\n(90万円)", "世の中のお金\n= 190万円"]
-        
         for i, s in enumerate(steps):
-            box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE if i < 3 else MSO_SHAPE.OVAL, 
-                                       Inches(1 + i*(size+gap)), start_y, size, size)
+            box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE if i < 3 else MSO_SHAPE.OVAL, Inches(1 + i*(size+gap)), start_y, size, size)
             box.fill.solid()
             box.fill.fore_color.rgb = ACCENT_YELLOW if i == 3 else SUB_GREY
             box.line.color.rgb = TEXT_DARK
             box.line.width = Pt(2)
-            
             tf = box.text_frame
             p = tf.paragraphs[0]
             p.text = s
@@ -235,101 +212,73 @@ class StrategyPresentationGenerator:
             p.font.bold = True
             p.font.color.rgb = TEXT_DARK
             p.alignment = PP_ALIGN.CENTER
-            
             if i < 3:
-                # Arrow
                 arr = slide.shapes.add_shape(MSO_SHAPE.RIGHT_ARROW, Inches(1 + i*(size+gap) + size), start_y + size//2 - Inches(0.2), gap, Inches(0.4))
                 arr.fill.solid()
                 arr.fill.fore_color.rgb = TEXT_DARK
                 arr.line.visible = False
 
     def draw_interest_margin_diagram(self, slide):
-        """Vertical bar diagram of Interest Margin."""
-        # Diagram representing yield-cost gap
         base_x = Inches(4)
         base_y = Inches(6)
         width = Inches(2)
-        
-        # Yield Bar
         y1 = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, base_x, base_y - Inches(4), width, Inches(4))
         y1.fill.solid()
         y1.fill.fore_color.rgb = TEXT_DARK
         tf1 = y1.text_frame.paragraphs[0]
         tf1.text = "貸出利回り"
         tf1.font.color.rgb = WHITE
-        
-        # Cost Bar
         y2 = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, base_x + width + Inches(0.5), base_y - Inches(1), width, Inches(1))
         y2.fill.solid()
         y2.fill.fore_color.rgb = SUB_GREY
         tf2 = y2.text_frame.paragraphs[0]
         tf2.text = "預金利息"
-        
-        # Margin Indicator
         bracket = slide.shapes.add_shape(MSO_SHAPE.LEFT_BRACE, base_x + width * 2 + Inches(1), base_y - Inches(4), Inches(0.5), Inches(3))
         bracket.rotation = 180
-        
         label = slide.shapes.add_textbox(base_x + width * 2 + Inches(1.6), base_y - Inches(2.5), Inches(3), Inches(1))
         label.text_frame.paragraphs[0].text = "この差が「利ざや」\n(収益の源泉)"
         label.text_frame.paragraphs[0].font.color.rgb = TEXT_DARK
         label.text_frame.paragraphs[0].font.bold = True
 
     def draw_bs_comparison(self, slide):
-        """Diagram comparing Bank B/S vs Company B/S."""
-        # Simple T-Account Visualization
         center = self.prs.slide_width // 2
         y = Inches(2.5)
         w = Inches(5)
         h = Inches(4)
-        
-        # Bank B/S
         b_x = center - w - Inches(0.5)
         slide.shapes.add_textbox(b_x, y - Inches(0.5), w, Inches(0.5)).text_frame.paragraphs[0].text = "銀行のB/S"
-        
-        # Assets (Left)
         al = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, b_x, y, w//2, h)
         al.text_frame.paragraphs[0].text = "資産\n\n(貸付金など)"
         al.fill.solid()
         al.fill.fore_color.rgb = ACCENT_YELLOW
-        
-        # Liab (Right)
         rl = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, b_x + w//2, y, w//2, h*0.9)
         rl.text_frame.paragraphs[0].text = "負債\n\n(預金など)"
         rl.fill.solid()
         rl.fill.fore_color.rgb = SUB_GREY
-        
-        # Equity
         el = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, b_x + w//2, y + h*0.9, w//2, h*0.1)
         el.text_frame.paragraphs[0].text = "純資産"
         el.fill.solid()
         el.fill.fore_color.rgb = TEXT_DARK
-        
-        # Label to emphasize Deposit = Liability
         lbl = slide.shapes.add_textbox(b_x + w//2 + Inches(0.5), y + h//2, Inches(2), Inches(1))
         lbl.text_frame.paragraphs[0].text = "★預金は「預かりもの」\nであり負債となる"
         lbl.text_frame.paragraphs[0].font.color.rgb = RGBColor(0xFF, 0, 0)
         lbl.text_frame.paragraphs[0].font.size = Pt(14)
 
     def draw_industry_map(self, slide):
-        """Diagram of Industry Layers."""
         layers = [
             ("中央銀行", "日本銀行 (唯一無二)", TEXT_DARK),
             ("都市銀行", "メガバンク (全国・海外展開)", RGBColor(0x15, 0x65, 0xC0)),
             ("地方銀行", "地域密着型 (地元経済の要)", RGBColor(0x2E, 0x7D, 0x32)),
             ("ネット銀行", "利便性・低コスト追求", RGBColor(0xEF, 0x6C, 0x00))
         ]
-        
         for i, (title, desc, color) in enumerate(layers):
             y = Inches(2.2 + i*1.2)
-            # Label
             lbl = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(1), y, Inches(3), Inches(0.8))
             lbl.fill.solid()
             lbl.fill.fore_color.rgb = color
             lbl.text_frame.paragraphs[0].text = title
             lbl.text_frame.paragraphs[0].font.bold = True
             lbl.text_frame.paragraphs[0].font.color.rgb = WHITE
-            
-            # Desc
             box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(4.5), y, Inches(7.5), Inches(0.8))
             box.fill.background()
             box.line.color.rgb = SUB_GREY
@@ -347,7 +296,6 @@ class StrategyPresentationGenerator:
         p.font.bold = True
         p.font.color.rgb = TEXT_DARK
         p.alignment = PP_ALIGN.CENTER
-        
         body_box = slide.shapes.add_textbox(Inches(1.5), Inches(2.5), Inches(10), Inches(4))
         tf = body_box.text_frame
         for item in items:
@@ -361,73 +309,68 @@ class StrategyPresentationGenerator:
         self.prs.save(filename)
 
 def generate_strategic_presentation():
-    gen = StrategyPresentationGenerator("銀行業界の基礎知識", "〜 戦略・ビジネスモデル・未来への展望 〜")
+    sections = [
+        "1. 銀行の歴史（合併・再編）",
+        "2. 銀行の新たなビジネスモデル",
+        "3. 銀行業界の現状",
+        "4. 競合・新たな脅威",
+        "5. 銀行の将来・今後の展望"
+    ]
     
-    # 0. Cover
+    gen = PresentationGenerator("銀行業界の基礎知識", "〜 戦略・ビジネスモデル・未来への展望 〜")
     gen.add_cover_slide()
     
-    # 1. Introduction
+    # Intro
     gen.add_message_slide("導入：定義", "銀行とは、一言で言えば\n「信用というインフラを管理する装置」である。", 
                         ["余剰資金（預金）を必要箇所（融資）へ分配する。", "社会の決済システム（為替）を維持する。", "経済活動の根幹を支える『信頼の仲介者』である。"])
     
     gen.add_message_slide("導入：アジェンダ", "本日の論点：銀行ビジネスの本質と未来", 
-                        ["CHAPTER 1: 合併と再編の歴史（なぜメガバンクが生まれたか）", 
-                         "CHAPTER 2: ビジネスモデルの詳細（信用創造と収益構造）",
-                         "CHAPTER 3: 業界の現状とデジタル・シフトの波",
-                         "CHAPTER 4: 競合と構造的脅威（GAFAMなどの参入）",
-                         "CHAPTER 5: 2030年代の銀行像（未来への展望）"])
+                        [f"Section 01: {sections[0]}", 
+                         f"Section 02: {sections[1]}",
+                         f"Section 03: {sections[2]}",
+                         f"Section 04: {sections[3]}",
+                         f"Section 05: {sections[4]}"])
 
-    # CHAPTER 1
-    gen.add_transition_slide(1, "銀行の歴史（合併・再編）")
-    gen.add_diagram_slide("CHAPTER 1", "激動の平成：13の都市銀行が『3大メガバンク』へ集約", gen.draw_megabank_flow)
+    # Section 1
+    gen.add_transition_slide(1, sections[0])
+    gen.add_diagram_slide("Section 01", "激動の平成：13の都市銀行が『3大メガバンク』へ集約", gen.draw_megabank_flow)
     
-    # CHAPTER 2
-    gen.add_transition_slide(2, "銀行の新たなビジネスモデル")
-    gen.add_message_slide("CHAPTER 2", "三大業務：預金・融資・為替の相乗効果", 
+    # Section 2
+    gen.add_transition_slide(2, sections[1])
+    gen.add_message_slide("Section 02", "三大業務：預金・融資・為替の相乗効果", 
                          ["預金：安全な保管と引き出しの自由を保証する。", "融資：預かった資金を成長期待の高い企業へ提供する。", "為替：現金を運ぶリスクを排除し、デジタル上で決済する。"])
-    
-    gen.add_message_slide("CHAPTER 2", "信用創造：銀行だけが持つ『魔法の仕組み』", 
+    gen.add_message_slide("Section 02", "信用創造：銀行だけが持つ『魔法の仕組み』", 
                          ["銀行は、預かった現金以上の『預金通貨』を創り出せる。", "企業への融資が新たな預金となり、市場の通貨量が増大する。", "これが資本主義経済における成長の起爆剤となる。"])
-    
-    gen.add_diagram_slide("CHAPTER 2", "【図解】信用創造：100万円が倍以上に増えていくプロセス", gen.draw_credit_creation_diagram)
-    
-    gen.add_message_slide("CHAPTER 2", "収益モデル①：利ざや（預貸利ざや）", 
+    gen.add_diagram_slide("Section 02", "【図解】信用創造：100万円が倍以上に増えていくプロセス", gen.draw_credit_creation_diagram)
+    gen.add_message_slide("Section 02", "収益モデル①：利ざや（預貸利ざや）", 
                          ["最も伝統的な収益源。資金の調達コストと運用利回りの差。", "預金者に支払う利息よりも、高い利息で企業に貸し出す。", "この『サヤ』で人件費やシステム維持費を賄う。"])
-    
-    gen.add_diagram_slide("CHAPTER 2", "【図解】利ざや：金利の『サヤ』が銀行の利益になる構造", gen.draw_interest_margin_diagram)
-    
-    gen.add_message_slide("CHAPTER 2", "収益モデル②：収益の多様化（Fee Business）", 
+    gen.add_diagram_slide("Section 02", "【図解】利ざや：金利の『サヤ』が銀行の利益になる構造", gen.draw_interest_margin_diagram)
+    gen.add_message_slide("Section 02", "収益モデル②：収益の多様化（Fee Business）", 
                          ["金利低下に対抗するため、手数料（Fee）収入を拡大。", "投資信託や保険の販売仲介手数料。M&Aや証券化のアドバイザリー。", "ソリューション提供による付加価値の獲得。"])
-    
-    gen.add_diagram_slide("CHAPTER 2", "【比較】特殊なバランスシート：預金は『負債』である", gen.draw_bs_comparison)
+    gen.add_diagram_slide("Section 02", "【比較】特殊なバランスシート：預金は『負債』である", gen.draw_bs_comparison)
 
-    # CHAPTER 3
-    gen.add_transition_slide(3, "銀行業界の現状")
-    gen.add_diagram_slide("CHAPTER 3", "国内銀行業界マップ：役割と規模に応じた階層構造", gen.draw_industry_map)
-    
-    gen.add_message_slide("CHAPTER 3", "マイナス金利環境の衝撃", 
+    # Section 3
+    gen.add_transition_slide(3, sections[2])
+    gen.add_diagram_slide("Section 03", "国内銀行業界マップ：役割と規模に応じた階層構造", gen.draw_industry_map)
+    gen.add_message_slide("Section 03", "マイナス金利環境の衝撃", 
                          ["長引く超低金利政策により、伝統的な利ざやが極限まで縮小。", "『預けておけば儲かる』モデルが崩壊。地方銀行を中心に危機感。", "不採算店舗の削減や、デジタルによるコスト構造改革が急務。"])
     
-    # CHAPTER 4
-    gen.add_transition_slide(4, "競合・新たな脅威")
-    gen.add_message_slide("CHAPTER 4", "フィンテックの台頭と決済の脱銀行化", 
+    # Section 4
+    gen.add_transition_slide(4, sections[3])
+    gen.add_message_slide("Section 04", "フィンテックの台頭と決済の脱銀行化", 
                          ["スマートフォン決済の急速な普及。銀行口座が『隠れたインフラ』へ。", "プラットフォーマー（PayPay、楽天など）による顧客接点の占有。", "レンディング（融資）領域へのAI・データ活用型企業の参入。"])
-    
-    gen.add_message_slide("CHAPTER 4", "異業種参入：Embedded Finance（組み込み金融）", 
+    gen.add_message_slide("Section 04", "異業種参入：Embedded Finance（組み込み金融）", 
                          ["『銀行に行く』という行為の消失。あらゆるサービスに金融が溶け込む。", "スターバックスやAppleが、実質的な金融機能を提供。", "伝統的銀行から顧客（データと接点）が奪われる『中抜き』の発生。"])
 
-    # CHAPTER 5
-    gen.add_transition_slide(5, "銀行の将来・今後の展望")
-    gen.add_message_slide("CHAPTER 5", "DXの本質：デジタルによる価値の再定義", 
+    # Section 5
+    gen.add_transition_slide(5, sections[4])
+    gen.add_message_slide("Section 05", "DXの本質：デジタルによる価値の再定義", 
                          ["単なるネットバンキング化ではなく、UI/UXの極致を追求。", "蓄積されたビッグデータを活用した、高度な与信とコンサルティング。", "顧客のライフステージに合わせたシームレスな解決策の提案。"])
-    
-    gen.add_message_slide("CHAPTER 5", "BaaS (Banking as a Service) への転換", 
+    gen.add_message_slide("Section 05", "BaaS (Banking as a Service) への転換", 
                          ["銀行自らフロントに立つのではなく、インフラ機能を外部に提供。", "他業種と連携し、金融機能を部品化（API化）して提供する。", "プラットフォームとしての生き残り戦略。"])
-    
-    gen.add_message_slide("CHAPTER 5", "2030年代の銀行像：Invisible Banking", 
+    gen.add_message_slide("Section 05", "2030年代の銀行像：Invisible Banking", 
                          ["『銀行』という看板が必要なくなる未来。生活に金融が溶け込む。", "AIによる完全自動の資産運用とアドバイザリー。", "社会の信頼インフラとして、データの安全性と流動性を担保する存在。"])
 
-    # 7. Summary
     gen.add_summary_slide([
         "銀行は『信用創造』という独自機能を持ち、経済を支える心臓である。",
         "伝統的な利ざやモデルから、デジタル・手数料ベースへの転換期にある。",
@@ -435,14 +378,9 @@ def generate_strategic_presentation():
         "2030年に向け、『見えない信頼インフラ』としての進化が求められる。"
     ])
     
-    # 8. References
     gen.add_message_slide("参考資料・サイト", "（以下、具体的なソースを追記予定）", ["全国銀行協会 統計データ", "金融庁：金融レポート", "日本銀行：金融経済統計月報"])
 
-    output_dir = "design-strategy"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-        
-    output_path = os.path.join(output_dir, "bank_strategy_presentation.pptx")
+    output_path = "bank_strategy_presentation.pptx" # Save to current dir
     gen.save(output_path)
     print(f"Strategic Presentation saved to {output_path}")
 
