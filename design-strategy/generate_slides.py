@@ -128,8 +128,8 @@ class PresentationGenerator:
         p_m.alignment = PP_ALIGN.LEFT
         
         if body_items:
-            # Widened and shifted left to prevent overflow
-            body_box = slide.shapes.add_textbox(Inches(0.8), Inches(3.2), Inches(11.7), Inches(3.5))
+            # Further widened and shifted left slightly to prevent single character wrapping
+            body_box = slide.shapes.add_textbox(Inches(0.6), Inches(3.2), Inches(12.2), Inches(3.5))
             tf_b = body_box.text_frame
             tf_b.word_wrap = True
             tf_b.vertical_anchor = MSO_ANCHOR.TOP
@@ -327,8 +327,8 @@ class PresentationGenerator:
         p.font.bold = True
         p.font.color.rgb = TEXT_DARK
         p.alignment = PP_ALIGN.CENTER
-        # Shifted left and widened with word wrap enabled
-        body_box = slide.shapes.add_textbox(Inches(0.8), Inches(2.5), Inches(11.7), Inches(4))
+        # Further widened to prevent punctuation hanging on a new line
+        body_box = slide.shapes.add_textbox(Inches(0.6), Inches(2.5), Inches(12.2), Inches(4))
         tf = body_box.text_frame
         tf.word_wrap = True
         for item in items:
