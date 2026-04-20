@@ -97,6 +97,7 @@ class PresentationGenerator:
         p2.font.name = FONT_SANS
         p2.font.size = Pt(20)
         p2.font.color.rgb = BEIGE
+        p2.space_before = Pt(40) # Increased spacing
         
         accent = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.5), title_top - Inches(0.3), Inches(1.0), Inches(0.1))
         accent.fill.solid()
