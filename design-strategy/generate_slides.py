@@ -128,15 +128,17 @@ class PresentationGenerator:
         p_m.alignment = PP_ALIGN.LEFT
         
         if body_items:
-            body_box = slide.shapes.add_textbox(Inches(1.5), Inches(3.2), Inches(10), Inches(3.5))
+            # Widened and shifted left to prevent overflow
+            body_box = slide.shapes.add_textbox(Inches(0.8), Inches(3.2), Inches(11.5), Inches(3.5))
             tf_b = body_box.text_frame
+            tf_b.word_wrap = True
             tf_b.vertical_anchor = MSO_ANCHOR.TOP
             for item in body_items:
                 p = tf_b.add_paragraph()
                 p.text = f"• {item}"
                 p.font.name = FONT_SANS
-                p.font.size = Pt(22) # Slightly reduced to prevent overflow (24 -> 22)
-                p.space_after = Pt(16)
+                p.font.size = Pt(21) # Further reduced to ensure safety
+                p.space_after = Pt(14)
                 p.font.color.rgb = TEXT_DARK
 
     def add_diagram_slide(self, title, message, diagram_func):
@@ -233,15 +235,17 @@ class PresentationGenerator:
         y1.text_frame.paragraphs[0].font.color.rgb = TEXT_DARK
         y1.text_frame.paragraphs[0].font.bold = True
         
-        # Cost Box (Explicit box added above Deposit Interest as requested)
-        cost_top = base_y - Inches(1.5)
-        c_box = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, base_x + width + Inches(0.5), cost_top, width, Inches(0.5))
+        # Cost Box (Explicit box above Deposit Interest - Now Light Blue and Aligned)
+        cost_top = base_y - Inches(4.0)
+        c_box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, base_x + width + Inches(0.5), cost_top, width, Inches(3.0))
         c_box.fill.solid()
-        c_box.fill.fore_color.rgb = ACCENT_YELLOW
-        c_box.line.visible = False
-        c_box.text_frame.paragraphs[0].text = "システム・運営コスト"
-        c_box.text_frame.paragraphs[0].font.size = Pt(12)
+        c_box.fill.fore_color.rgb = RGBColor(0xAD, 0xD8, 0xE6) # Light Blue
+        c_box.line.color.rgb = TEXT_DARK
+        c_box.line.width = Pt(1)
+        c_box.text_frame.paragraphs[0].text = "銀行の収益 (利ざや)"
+        c_box.text_frame.paragraphs[0].font.size = Pt(14)
         c_box.text_frame.paragraphs[0].font.color.rgb = TEXT_DARK
+        c_box.text_frame.paragraphs[0].font.bold = True
 
         # Cost (Deposit Interest)
         y2 = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, base_x + width + Inches(0.5), base_y - Inches(1.0), width, Inches(1.0))
@@ -337,11 +341,11 @@ class PresentationGenerator:
 
 def generate_strategic_presentation():
     sections = [
-        "1. 銀行の歴史（合併・再編）",
-        "2. 銀行の新たなビジネスモデル",
-        "3. 銀行業界の現状",
-        "4. 競合・新たな脅威",
-        "5. 銀行の将来・今後の展望"
+        "銀行の歴史（合併・再編）",
+        "銀行の新たなビジネスモデル",
+        "銀行業界の現状",
+        "競合・新たな脅威",
+        "銀行の将来・今後の展望"
     ]
     gen = PresentationGenerator("銀行業界の基礎知識", "〜 戦略・ビジネスモデル・未来への展望 〜")
     gen.add_cover_slide()
@@ -382,7 +386,7 @@ def generate_strategic_presentation():
     gen.add_summary_slide([
         "銀行は『信用創造』という独自機能を持ち、経済を支える心臓である。",
         "伝統的な利ざやモデルから、デジタル・手数料ベースへの転換期にある。",
-        "BaaSやEmbedded Financeにより、銀行の境界線が曖昧になっている。",
+        "外部サービスとの金融融合により、銀行の境界線が曖昧になっている。",
         "2030年に向け、『見えない信頼インフラ』としての進化が求められる。"
     ])
     gen.add_message_slide("参考資料・サイト", "（以下、具体的なソースを追記予定）", ["全国銀行協会 統計データ", "金融庁：金融レポート", "日本銀行：金融経済統計月報"])
