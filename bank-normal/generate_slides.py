@@ -29,14 +29,7 @@ class PresentationGenerator:
         line.fill.solid()
         line.fill.fore_color.rgb = ACCENT_LINE
         line.line.visible = False
-        
-        # Bottom small text
-        footer = slide.shapes.add_textbox(Inches(0.5), Inches(7.1), Inches(5), Inches(0.3))
-        p = footer.text_frame.paragraphs[0]
-        p.text = "銀行業界の基礎知識 - 易化版"
-        p.font.name = FONT_SANS
-        p.font.size = Pt(12)
-        p.font.color.rgb = SUB_GREY
+
 
     def add_cover_slide(self):
         slide = self.prs.slides.add_slide(self.prs.slide_layouts[6])
@@ -134,7 +127,7 @@ class PresentationGenerator:
         p.font.color.rgb = TEXT_DARK
         
         if body_items:
-            b_box = slide.shapes.add_textbox(Inches(0.5), Inches(3.0), Inches(12.333), Inches(3.8))
+            b_box = slide.shapes.add_textbox(Inches(0.4), Inches(3.0), Inches(12.5), Inches(3.8))
             tf = b_box.text_frame
             tf.word_wrap = True
             tf.vertical_anchor = MSO_ANCHOR.TOP
@@ -194,12 +187,13 @@ class PresentationGenerator:
         b1.text_frame.word_wrap = True
         
         # Arrow
-        arr = slide.shapes.add_shape(MSO_SHAPE.RIGHT_ARROW, Inches(5.5), y+Inches(0.4), Inches(2.3), Inches(0.7))
+        arr = slide.shapes.add_shape(MSO_SHAPE.RIGHT_ARROW, Inches(5.5), y+Inches(0.2), Inches(2.3), Inches(1.1))
         arr.fill.solid()
         arr.fill.fore_color.rgb = TEXT_DARK
         arr.line.visible = False
         arr.text_frame.paragraphs[0].text = "お互いに合体！\n(合併)"
         arr.text_frame.paragraphs[0].font.size = Pt(16)
+        arr.text_frame.paragraphs[0].font.color.rgb = WHITE
         
         # Right box
         b2 = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(8.3), y-Inches(0.5), Inches(3.5), Inches(2.5))
@@ -260,42 +254,46 @@ class PresentationGenerator:
         lbl.text_frame.paragraphs[0].font.size = Pt(22)
 
     def draw_interest_margin(self, slide):
-        base_x = Inches(2.0)
+        base_x = Inches(1.0)
         y = Inches(3.5)
         
         # Deposit
-        b1 = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, base_x, y, Inches(3), Inches(2))
+        b1 = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, base_x, y, Inches(3.3), Inches(2.3))
         b1.fill.solid()
         b1.fill.fore_color.rgb = LIGHT_GREY
         b1.line.color.rgb = ACCENT_LINE
-        b1.text_frame.paragraphs[0].text = "① みんなから預かる\n(利息 1円を払う)"
-        b1.text_frame.paragraphs[0].font.color.rgb = TEXT_DARK
-        b1.text_frame.paragraphs[0].font.size = Pt(20)
-        b1.text_frame.paragraphs[0].font.bold = True
+        p1 = b1.text_frame.paragraphs[0]
+        p1.text = "① みんなから預かる\n(利息 1円を払う)"
+        p1.font.color.rgb = TEXT_DARK
+        p1.font.size = Pt(22)
+        p1.font.bold = True
         
         # Loan
-        b2 = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, base_x + Inches(3.5), y, Inches(3), Inches(2))
+        b2 = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, base_x + Inches(3.8), y, Inches(3.3), Inches(2.3))
         b2.fill.solid()
         b2.fill.fore_color.rgb = SUB_GREY
         b2.line.visible = False
-        b2.text_frame.paragraphs[0].text = "② 企業に貸す\n(利息 10円をもらう)"
-        b2.text_frame.paragraphs[0].font.color.rgb = WHITE
-        b2.text_frame.paragraphs[0].font.size = Pt(20)
-        b2.text_frame.paragraphs[0].font.bold = True
+        p2 = b2.text_frame.paragraphs[0]
+        p2.text = "② 企業に貸す\n(利息 10円をもらう)"
+        p2.font.color.rgb = WHITE
+        p2.font.size = Pt(22)
+        p2.font.bold = True
         
         # Margin
-        b3 = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, base_x + Inches(7.0), y, Inches(3), Inches(2))
+        b3 = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, base_x + Inches(7.6), y, Inches(3.5), Inches(2.3))
         b3.fill.solid()
         b3.fill.fore_color.rgb = TEXT_DARK
         b3.line.visible = False
-        b3.text_frame.paragraphs[0].text = "③ 銀行の利益\n(差額の 9円)"
-        b3.text_frame.paragraphs[0].font.color.rgb = WHITE
-        b3.text_frame.paragraphs[0].font.size = Pt(24)
-        b3.text_frame.paragraphs[0].font.bold = True
+        p3 = b3.text_frame.paragraphs[0]
+        p3.text = "③ 銀行の利益\n(差額の 9円)"
+        p3.font.color.rgb = WHITE
+        p3.font.size = Pt(26)
+        p3.font.bold = True
         
-        lbl = slide.shapes.add_textbox(Inches(2.0), Inches(5.8), Inches(10), Inches(1))
+        lbl = slide.shapes.add_textbox(Inches(1.0), Inches(6.0), Inches(11.333), Inches(1))
         lbl.text_frame.paragraphs[0].text = "スーパーの「安く仕入れて、高く売る」と全く同じ『利ざや』の考え方です。"
         lbl.text_frame.paragraphs[0].font.size = Pt(24)
+
 
     def draw_balance_sheet(self, slide):
         y = Inches(3.5)
@@ -439,9 +437,8 @@ def generate_normal_presentation():
     gen.add_transition_slide("4", "銀行業界のリアルな現状")
     gen.add_diagram_slide("銀行の仲間たち", "目的や規模に合わせていろいろな銀行があります。", gen.draw_industry_map)
     gen.add_message_slide("今の銀行の悩み：金利がほぼ0円", "「利ざや」が稼げなくて大ピンチ！", [
-        "今は、お金を借りやすいように「金利」がすごく低く設定されています。",
-        "つまり、企業にお金を貸しても「利息（お礼）」がほとんど貰えません。",
-        "100万円を1年預けても、チロルチョコ1個買えないほどの低金利時代です。"
+        "今は金利が低いため、企業に貸しても「利息」がほとんど貰えません。",
+        "100万円を1年預けても、チロルチョコ1個買えない時代です。"
     ])
     gen.add_message_slide("地方銀行の「合体」と「統廃合」", "生き残りをかけて規模を大きくする", [
         "稼ぎにくくなったため、地方の銀行同士が協力・合体するニュースが増えています。",
@@ -479,18 +476,13 @@ def generate_normal_presentation():
         "スマホやスマートウォッチ、生活のあらゆる場面に金融の仕組みが溶け込みます。"
     ])
 
-    # 7. まとめ (2)
-    gen.add_transition_slide("7", "まとめと問いかけ")
+    # 7. まとめ (1)
+    gen.add_transition_slide("7", "まとめ")
     gen.add_summary_slide([
         "銀行は、預金・融資・為替を通じて社会にお金を巡らせる「心臓」。",
         "「安く仕入れて高く売る」のが基本で、今は金利が低くて大変。",
         "PayPayやスタバなど、他のサービスとの境界線がなくなりつつある。",
         "これからはスマホの奥に溶け込む「見えない銀行」へと進化していく。"
-    ])
-    gen.add_message_slide("私たちへの問いかけ", "最後にお考えください。", [
-        "「あなたが一番よく使うお金のアプリ（サービス）は何ですか？」",
-        "「その理由は何ですか？（早い、安い、ポイントがつく…）」",
-        "それを考えることが、これからの金融の未来を知る第一歩です。"
     ])
 
     output_path = "bank_normal_presentation.pptx"
