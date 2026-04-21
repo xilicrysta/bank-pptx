@@ -329,13 +329,13 @@ class PresentationGenerator:
 
     def draw_industry_map(self, slide):
         groups = [
-            ("日本銀行", "全てのお金の元締め (紙幣を刷る)", Inches(1.0), Inches(3.0)),
-            ("メガバンク", "全国展開・世界相手 (三菱UFJなど)", Inches(4.2), Inches(3.0)),
-            ("地方銀行", "あなたの地元の企業を応援してる", Inches(7.4), Inches(3.0)),
-            ("ネット銀行", "スマホで完結・店舗がない (楽天など)", Inches(10.6), Inches(3.0))
+            ("日本銀行", "全てのお金の元締め (紙幣を刷る)", Inches(0.6), Inches(3.0)),
+            ("メガバンク", "全国展開・世界相手 (三菱UFJなど)", Inches(3.7), Inches(3.0)),
+            ("地方銀行", "あなたの地元の企業を応援してる", Inches(6.8), Inches(3.0)),
+            ("ネット銀行", "スマホで完結・店舗がない (楽天など)", Inches(9.9), Inches(3.0))
         ]
         for name, desc, x, y in groups:
-            box = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, Inches(3.0), Inches(2.5))
+            box = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, Inches(2.8), Inches(2.5))
             box.fill.solid()
             if name == "日本銀行":
                 box.fill.fore_color.rgb = TEXT_DARK
@@ -347,7 +347,7 @@ class PresentationGenerator:
                 
             p = box.text_frame.paragraphs[0]
             p.text = f"{name}\n\n{desc}"
-            p.font.size = Pt(20)
+            p.font.size = Pt(18)
             p.font.bold = True
             box.text_frame.word_wrap = True
 
