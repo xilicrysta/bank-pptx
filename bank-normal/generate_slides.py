@@ -83,7 +83,10 @@ class PresentationGenerator:
         
         num_box = slide.shapes.add_textbox(Inches(1.5), Inches(2.2), Inches(10), Inches(1))
         p = num_box.text_frame.paragraphs[0]
-        p.text = f"CHAPTER {section_num}"
+        if section_num:
+            p.text = f"CHAPTER {section_num}"
+        else:
+            p.text = ""
         p.font.name = FONT_SANS
         p.font.size = Pt(28)
         p.font.color.rgb = SUB_GREY
@@ -394,7 +397,7 @@ def generate_normal_presentation():
         "実は、ただの「お金の置き場所」ではありません。",
         "社会中にお金をくまなく巡らせる『心臓』としての役割があります。"
     ])
-    gen.add_transition_slide("1", "銀行ってそもそも何？")
+    gen.add_transition_slide("", "銀行ってそもそも何？")
     gen.add_message_slide("本日のアジェンダ", "今日お話しすること", [
         "1. 銀行の昔と今（歴史）",
         "2. 銀行はどうやって儲けてる？（仕組み）",
@@ -404,11 +407,11 @@ def generate_normal_presentation():
     ])
     
     # 2. 歴史 (2)
-    gen.add_transition_slide("2", "銀行の歴史：合併の嵐")
+    gen.add_transition_slide("1", "銀行の歴史：合併の嵐")
     gen.add_diagram_slide("銀行の歴史", "昔はたくさんあった銀行が、合体して巨大化しました。", gen.draw_megabank_flow)
     
     # 3. 仕組み (8)
-    gen.add_transition_slide("3", "銀行のお仕事と儲けの仕組み")
+    gen.add_transition_slide("2", "銀行のお仕事と儲けの仕組み")
     gen.add_message_slide("銀行の三大業務（大切なお仕事）", "銀行が絶対にやっている3つのこと", [
         "預金 (よきん) ： みんなのお金を安全にお預かりする",
         "融資 (ゆうし) ： お金に困っている人や頑張る企業に貸す",
@@ -434,7 +437,7 @@ def generate_normal_presentation():
     gen.add_diagram_slide("銀行のバランスシート (持ち物リスト)", "私たちのお金は、銀行にとって『預かりもの』", gen.draw_balance_sheet)
 
     # 4. 現状 (4)
-    gen.add_transition_slide("4", "銀行業界のリアルな現状")
+    gen.add_transition_slide("3", "銀行業界のリアルな現状")
     gen.add_diagram_slide("銀行の仲間たち", "目的や規模に合わせていろいろな銀行があります。", gen.draw_industry_map)
     gen.add_message_slide("今の銀行の悩み：金利がほぼ0円", "「利ざや」が稼げなくて大ピンチ！", [
         "今は金利が低いため、企業に貸しても「利息」がほとんど貰えません。",
@@ -446,7 +449,7 @@ def generate_normal_presentation():
     ])
 
     # 5. ライバル (4)
-    gen.add_transition_slide("5", "新しいライバルたちの登場")
+    gen.add_transition_slide("4", "新しいライバルたちの登場")
     gen.add_message_slide("スマホ決済の台頭 (PayPayやメルペイ)", "銀行に行かなくても支払いができる！", [
         "お店で払う時、現金（銀行）を直接触らずにスマホで「ピッ」とするだけ。",
         "お金のやり取りに、銀行という「橋」を通らなくてもよい世界になっています。"
@@ -462,7 +465,7 @@ def generate_normal_presentation():
     ])
 
     # 6. 未来 (4)
-    gen.add_transition_slide("6", "銀行のこれからの姿")
+    gen.add_transition_slide("5", "銀行のこれからの姿")
     gen.add_message_slide("DX (デジタル化) の推進", "紙とハンコからの卒業", [
         "「店舗に行って、書類を書いて、ハンコを押す」という昔のやり方を変える。",
         "スマホアプリひとつで全部完結する「超ベンリな銀行」へ進化中です。"
@@ -477,7 +480,7 @@ def generate_normal_presentation():
     ])
 
     # 7. まとめ (1)
-    gen.add_transition_slide("7", "まとめ")
+    gen.add_transition_slide("", "まとめ")
     gen.add_summary_slide([
         "銀行は、預金・融資・為替を通じて社会にお金を巡らせる「心臓」。",
         "「安く仕入れて高く売る」のが基本で、今は金利が低くて大変。",
